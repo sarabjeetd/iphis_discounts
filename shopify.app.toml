@@ -1,2 +1,22 @@
-# Necessary for Shopify CLI 3.0 to function as expected. 
-# Please do not delete unless you know what you're doing.
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+name = "Iphis Discounts"
+client_id = "2b2c5016df859119a974ae9c4b69785e"
+application_url = "https://e677-2604-3d09-7376-4300-ada6-fb94-69f-a2de.ngrok-free.app"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+use_legacy_install_flow = true
+
+[auth]
+redirect_urls = [
+  "https://e677-2604-3d09-7376-4300-ada6-fb94-69f-a2de.ngrok-free.app/api/auth/tokens",
+  "https://e677-2604-3d09-7376-4300-ada6-fb94-69f-a2de.ngrok-free.app/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2023-07"
+
+[pos]
+embedded = false
