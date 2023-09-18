@@ -1,17 +1,17 @@
 import useFetch from "@/components/hooks/useFetch";
 import { Page, Layout, LegacyCard } from "@shopify/polaris";
 
-const IphisDiscountPage = () => {
+const IphisProductDiscountPage = () => {
     const fetch = useFetch();
     return (
         <>
             <Page>
                 <Layout>
                     <Layout.Section>
-                        <LegacyCard sectioned title="Iphis Order Discount"  primaryFooterAction={{
-                                    content: "Install",  
+                        <LegacyCard sectioned title="Iphis Product Discount"  primaryFooterAction={{
+                                   content: "Install",  
                                    onAction:async()=> {
-                                    const response = await (await fetch("/api/apps")).json();
+                                    const response = await (await fetch("/api/apps/iphis_discount_product")).json();
                                     console.log(response);
                                    } 
                                 }}
@@ -25,4 +25,4 @@ const IphisDiscountPage = () => {
     );
 };
 
-export default IphisDiscountPage;
+export default IphisProductDiscountPage;

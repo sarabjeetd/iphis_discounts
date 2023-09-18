@@ -1,0 +1,33 @@
+query Input {
+  cart{
+    lines{
+      attribute
+      {
+        key
+        value
+      }
+      id
+      merchandise{
+       ... on ProductVariant {
+          id
+        }
+      }
+      cost{
+        amountPerQuantity{ 
+          amount
+          currencyCode
+        }
+        subtotalAmount{ 
+          amount
+          currencyCode
+        }
+      }
+      quantity
+    }
+  }
+  discountNode {
+    metafield(namespace: "$app:iphis-product-discount", key: "function-configuration") {
+      value
+    }
+  }
+}
