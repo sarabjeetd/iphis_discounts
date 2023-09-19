@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }) {
         <NavigationMenu
           navigationLinks={[
             {
-              label: "Fetch Data",
+              label: "Debug - Fetch Data",
               destination: "/debug/getData",
             },
             {

@@ -121,7 +121,7 @@ if(sets > 0){
             }
           }
         ],
-        "message": "5 for "+storeCurrency+" "+discountObj[storeCurrency]+" Applied!"
+        "message": "5 for "+storeCurrency+" "+discountObj[storeCurrency]+" Discount Applied!"
       }
     ]
   }

@@ -1,7 +1,14 @@
 let discountObj = {
-    minimum_required_quantity:5,
-    usd:60
-  }
+  minimum_required_quantity:5,
+  USD:60,
+  CAD:80,
+  GBP:48,
+  EUR:56,
+  AUD:93,
+  MXN:1027,
+}
+
+let storeCurrency = "CAD"
 
 // console.log(discountObj);
 
@@ -117,6 +124,12 @@ if(sets > 0){
   console.log(total_discount)  
     
   var remaining_balance = totalAmount - total_discount;
+
+  var message = "5 for "+storeCurrency+" "+discountObj[storeCurrency]+" Discount Applied! <br />";
+  
+  console.log(message)  
+
+
 
   console.log("FINAL AFTER DISCOUNT");
   console.log(remaining_balance)  

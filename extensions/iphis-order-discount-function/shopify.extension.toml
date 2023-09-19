@@ -1,4 +1,4 @@
-name = "Iphis Order Discount Function"
+name = "Iphis Order Discounts 5 for $60"
 type = "order_discounts"
 api_version = "2023-07"
 

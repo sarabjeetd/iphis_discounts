@@ -12,7 +12,11 @@ const handler = async (req, res) => {
     const response = await client.query({
       data: `mutation MyMutation {
         discountAutomaticAppCreate(
-          automaticAppDiscount: {title: "Iphis Discount", functionId: "${process.env.SHOPIFY_IPHIS_ORDER_DISCOUNT_FUNCTION_ID}", startsAt: "2023-09-15T00:00:00"}
+          automaticAppDiscount: {
+            title: "Iphis Discount", 
+            functionId: "${process.env.SHOPIFY_IPHIS_ORDER_DISCOUNTS_5_FOR_60_ID}",
+            startsAt: "2023-09-15T00:00:00"
+          }
         ) {
           automaticAppDiscount {
             discountId

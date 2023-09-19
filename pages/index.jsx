@@ -19,136 +19,37 @@ const HomePage = () => {
       <Layout>
         <Layout.Section fullWidth>
           <LegacyCard
-            title="Iphis Discountss"
+            title="Iphis Discounts"
             sectioned
-            primaryFooterAction={{
-              content: "Debug Cards",
-              onAction: () => {
-                router.push("/debug");
-              },
-            }}
           >
             <p>
-              Explore how the repository handles data fetching from the backend,
-              App Proxy, making GraphQL requests, Billing API and more.
+            This app offers an automatic discount of $60 when you purchase 5 items, and it also supports equivalent discounts in other currencies. 
+            <br />
+            <br />
+            <b>Buy 5 for :</b>  
+            <ul>
+                <li>USD 60</li>
+                <li>CAD 80</li>
+                <li>GBP 48</li>
+                <li>EUR 56</li>
+                <li>AUD 93</li>
+                <li>MXN 1027</li>
+            </ul>
+
+            <br />
+            <br />
+
+            <b>To enable this discount, follow these simple steps:</b>
+
+            <ul>
+                <li>Go to Discounts</li>
+                <li>Create Discount</li>
+                <li>Choose Iphis Order Discount 5 for $60</li>
+            </ul>
             </p>
           </LegacyCard>
         </Layout.Section>
-        <Layout.Section oneHalf>
-          <LegacyCard
-            sectioned
-            title="Repository"
-            primaryFooterAction={{
-              content: "GitHub",
-              onAction: () => {
-                redirect.dispatch(Redirect.Action.REMOTE, {
-                  url: "https://github.com/kinngh/shopify-nextjs-prisma-app",
-                  newContext: true,
-                });
-              },
-            }}
-            secondaryFooterActions={[
-              {
-                content: "Open Issue",
-                onAction: () => {
-                  redirect.dispatch(Redirect.Action.REMOTE, {
-                    url: "https://github.com/kinngh/shopify-nextjs-prisma-app/issues?q=is%3Aissue",
-                    newContext: true,
-                  });
-                },
-              },
-            ]}
-          >
-            <p>Star the repository, open a new issue or start a discussion.</p>
-          </LegacyCard>
-          <LegacyCard
-            sectioned
-            title="Changelog"
-            primaryFooterAction={{
-              content: "Explore",
-              onAction: () => {
-                redirect.dispatch(Redirect.Action.REMOTE, {
-                  url: "https://shopify.dev/changelog/",
-                  newContext: true,
-                });
-              },
-            }}
-          >
-            <p>Explore changelog on Shopify.dev and follow updates.</p>
-          </LegacyCard>
-        </Layout.Section>
-        <Layout.Section oneHalf>
-          <LegacyCard
-            sectioned
-            title="Documentation"
-            primaryFooterAction={{
-              content: "Explore APIs",
-              onAction: () => {
-                redirect.dispatch(Redirect.Action.REMOTE, {
-                  url: "https://shopify.dev/graphiql/admin-graphiql",
-                  newContext: true,
-                });
-              },
-            }}
-            secondaryFooterActions={[
-              {
-                content: "Design Guidelines",
-                onAction: () => {
-                  redirect.dispatch(Redirect.Action.REMOTE, {
-                    url: "https://shopify.dev/apps/design-guidelines",
-                    newContext: true,
-                  });
-                },
-              },
-            ]}
-          >
-            <p>
-              Explore the GraphQL APIs in Graphiql or read design guidelines.
-            </p>
-          </LegacyCard>
-          <LegacyCard
-            sectioned
-            title="Hiring?"
-            primaryFooterAction={{
-              content: "Twitter",
-              onAction: () => {
-                redirect.dispatch(Redirect.Action.REMOTE, {
-                  url: "https://www.twitter.com/kinngh",
-                  newContext: true,
-                });
-              },
-            }}
-            secondaryFooterActions={[
-              {
-                content: "LinkedIn",
-                onAction: () => {
-                  redirect.dispatch(Redirect.Action.REMOTE, {
-                    url: "https://www.linkedin.com/in/theharshdeep/",
-                    newContext: true,
-                  });
-                },
-              },
-            ]}
-          >
-            <p>🌎 / 🇨🇦 and looking to expand your engineering team?</p>
-          </LegacyCard>
-        </Layout.Section>
-        <Layout.Section fullWidth>
-          <LegacyCard
-            sectioned
-            title="Developer Notes"
-            primaryFooterAction={{
-              content: "Read More",
-              onAction: () => {
-                router.push("/debug/devNotes");
-              },
-            }}
-          >
-            <p>
-              Read notes on opening an issue, creating App Extensions and more.
-            </p>
-          </LegacyCard>
-        </Layout.Section>
+
       </Layout>
     </Page>
   );
