@@ -19,7 +19,7 @@ const HomePage = () => {
       <Layout>
         <Layout.Section fullWidth>
           <LegacyCard
-            title="Debug Cards"
+            title="Iphis Discountss"
             sectioned
             primaryFooterAction={{
               content: "Debug Cards",
