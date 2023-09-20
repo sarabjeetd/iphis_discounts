@@ -1,8 +1,8 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 name = "Iphis Discounts"
-client_id = "3c48d3d21301345336620ff1277a27df"
-application_url = "https://iphisdiscounts.zinreet.com"
+client_id = "9259415d609d01b63055b7948726c472"
+application_url = "https://718d-2604-3d09-7376-4300-f13e-878-cb8d-e347.ngrok-free.app"
 embedded = true
 
 [access_scopes]
@@ -11,8 +11,8 @@ use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://iphisdiscounts.zinreet.com/api/auth/tokens",
-  "https://iphisdiscounts.zinreet.com/api/auth/callback"
+  "https://718d-2604-3d09-7376-4300-f13e-878-cb8d-e347.ngrok-free.app/api/auth/tokens",
+  "https://718d-2604-3d09-7376-4300-f13e-878-cb8d-e347.ngrok-free.app/api/auth/callback"
 ]
 
 [webhooks]
