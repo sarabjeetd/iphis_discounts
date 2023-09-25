@@ -42,7 +42,7 @@ const BillingAPI = () => {
             }}
           >
             <p>
-              Subscribe your merchant to a test $10.25 plan and redirect to your
+              Subscribe your merchant to a test `${process.env.SHOPIFY_PLAN_NAME}` and redirect to your
               home page.
             </p>
 

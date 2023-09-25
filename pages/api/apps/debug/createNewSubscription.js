@@ -10,8 +10,8 @@ const handler = async (req, res) => {
   });
   const returnUrl = `${process.env.SHOPIFY_APP_URL}/api/auth?shop=${shop}`;
 
-  const planName = "$10.25 plan";
-  const planPrice = 10.25; //Always a decimal
+  const planName = "`${process.env.SHOPIFY_PLAN_NAME}`";
+  const planPrice = `${process.env.SHOPIFY_PLAN_COST}`; //Always a decimal
 
   const response = await client.query({
     data: `mutation CreateSubscription{

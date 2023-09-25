@@ -7,24 +7,33 @@ import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+
   return (
-    <PolarisProvider i18n={translations}>
-      <AppBridgeProvider>
-        <NavigationMenu
-          navigationLinks={[
-            {
-              label: "Debug - Fetch Data",
-              destination: "/debug/getData",
-            },
-            {
-              label: "Billing API",
-              destination: "/debug/billing",
-            },
-          ]}
-          matcher={(link) => router.pathname === link.destination}
-        />
-        <Component {...pageProps} />
-      </AppBridgeProvider>
-    </PolarisProvider>
+  <PolarisProvider i18n={translations}>
+    <AppBridgeProvider>
+      <Component {...pageProps} />
+    </AppBridgeProvider>
+  </PolarisProvider>
   );
+
+  // return (
+  //   <PolarisProvider i18n={translations}>
+  //     <AppBridgeProvider>
+  //       <NavigationMenu
+  //         navigationLinks={[
+  //           {
+  //             label: "Debug - Fetch Data",
+  //             destination: "/debug/getData",
+  //           },
+  //           {
+  //             label: "Billing API",
+  //             destination: "/debug/billing",
+  //           },
+  //         ]}
+  //         matcher={(link) => router.pathname === link.destination}
+  //       />
+  //       <Component {...pageProps} />
+  //     </AppBridgeProvider>
+  //   </PolarisProvider>
+  // );
 }
