@@ -13,7 +13,7 @@ const handler = async (req, res) => {
       data: `mutation MyMutation {
         discountAutomaticAppCreate(
           automaticAppDiscount: {
-            title: "Iphis Discount", 
+            title: "Iphis Custom Discount", 
             functionId: "${process.env.SHOPIFY_IPHIS_ORDER_DISCOUNTS_5_FOR_60_ID}",
             startsAt: "2023-09-15T00:00:00"
           }
