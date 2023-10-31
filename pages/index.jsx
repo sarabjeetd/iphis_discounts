@@ -1,53 +1,238 @@
+import { useEffect, useMemo, useState } from "react";
 import isShopAvailable from "@/utils/middleware/isShopAvailable";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Redirect } from "@shopify/app-bridge/actions";
-import { Layout, LegacyCard, Page } from "@shopify/polaris";
+import { Form, Layout, LegacyCard, PageActions, Page, TextField , Text, VerticalStack, Card, Select  } from "@shopify/polaris";
+import useFetch from "@/components/hooks/useFetch";
+import CurrencyField from "../components/CurrencyField";
+import { CurrencyCode } from "@shopify/react-i18n";
+import { useForm, useField } from "@shopify/react-form";
 import { useRouter } from "next/router";
 
-//On first install, check if the store is installed and redirect accordingly
+import {
+  RequirementType,
+  DiscountClass,
+  DiscountMethod,
+  MethodCard,
+  onBreadcrumbAction,
+  SummaryCard,
+  CombinationCard,
+  ActiveDatesCard,
+  DiscountStatus,
+} from "@shopify/discount-app-components";
+
 export async function getServerSideProps(context) {
   return await isShopAvailable(context);
 }
 
 const HomePage = () => {
+  const fetch = useFetch();
   const router = useRouter();
   const app = useAppBridge();
+  const isLoading = navigation.state === "submitting";
+  const todaysDate = useMemo(() => new Date(), []);
+  const currencyCode = CurrencyCode.Cad;
+  const [selectedCurrencyCode, setSelectedCurrencyCode] = useState(CurrencyCode.Cad);
+  const handleCurrencyCodeChange = (newValue) => {
+    setSelectedCurrencyCode(newValue);
+  };
+  const [CurrencyCodeValue, setCurrencyCodeValue] = useState([]);
+
   const redirect = Redirect.create(app);
+  const {
+    fields: {
+      requirementType,
+      requirementSubtotal,
+      requirementQuantity,
+      discountTitle,
+      discountCode,
+      discountMethod,
+      configuration,
+      combinesWith,
+      startDate,
+      endDate,
+      usageLimit,
+      appliesOncePerCustomer
+    },
+    submit,
+  } = useForm({
+    fields: {
+      requirementType: useField(RequirementType.None),
+      requirementSubtotal: useField("0"),
+      requirementQuantity: useField("0"),
+      discountTitle: useField(""),
+      discountMethod: useField(DiscountMethod.Automatic),
+      discountCode: useField(""),
+      combinesWith: useField({
+        orderDiscounts: false,
+        productDiscounts: false,
+        shippingDiscounts: false,
+      }),
+      
+      
+      usageLimit: useField(null),
+      appliesOncePerCustomer: useField(false),
+      startDate: useField(todaysDate),
+      endDate: useField(null),
+      configuration: {
+        quantity: useField('1'),
+        amount: useField('0'),
+      },
+     
+    },
+    onSubmit: async (form) => {
+      const discount = {
+        title: form.discountTitle,
+        method: form.discountMethod,
+        code: form.discountCode,
+        usageLimit: form.usageLimit == null ? null : parseInt(form.usageLimit),
+        appliesOncePerCustomer: form.appliesOncePerCustomer,
+        startsAt: form.startDate,
+        endsAt: form.endDate,
+        configuration: {
+          quantity: parseInt(form.configuration.quantity),
+          amount: parseFloat(form.configuration.amount),
+        },
+      };
+
+      console.log('Discount data:', discount);
+      return { status: "success" };
+    },
+  });
 
   return (
-    <Page title="Home">
+    <Page title="IPHIS product discount"
+    backAction={{
+      content: "Discounts",
+      onAction: () => onBreadcrumbAction(redirect, true),
+    }}
+    primaryAction={{
+      content: "Save",
+      onAction: submit,
+      loading: isLoading,
+    }}
+    >
       <Layout>
-        <Layout.Section fullWidth>
-          <LegacyCard
-            title="Iphis Discounts"
-            sectioned
-          >
-            <p>
-            This app offers an automatic discount of $60 when you purchase 5 items, and it also supports equivalent discounts in other currencies. 
-            <br />
-            <br />
-            <b>Buy 5 for :</b>  
-            <ul>
-                <li>USD 60</li>
-                <li>CAD 80</li>
-                <li>GBP 48</li>
-                <li>EUR 56</li>
-                <li>AUD 93</li>
-                <li>MXN 1027</li>
-            </ul>
+        <Layout.Section>
+        <Form method="post">
+          <MethodCard
+              title="IPHIS"
+              discountTitle={discountTitle}
+              discountClass={DiscountClass.Product}
+              discountCode={discountCode}
+              discountMethod={discountMethod}
+            />
+            {/* <VerticalStack align="space-around" gap="3">
+              <Text as="p">
+                <span className="Polaris-Text--root Polaris-Text--headingMd">IPHIS</span>{" "}
+                <span className="Polaris-Text--root Polaris-Text--subdued">Product discount</span>
+              </Text>
 
-            <br />
-            <br />
+                <Text variant="headingMd" as="h2">
+                    Automatic discount
+                </Text>
+                <TextField
+                  label="Title"
+                  autoComplete="on"
+                  {...discountTitle}
+                />
+            </VerticalStack> */}
+                <VerticalStack gap="3">
+                  <Card>
+                        <Text variant="headingMd" as="h2">
+                          Quantity for offer to activate
+                        </Text>
+                        <TextField
+                          label="Minimum quantity"
+                          autoComplete="on"
+                          {...configuration.quantity}
+                        />
+                        <span className="Polaris-Text--root Polaris-Text--subdued">Number of items to buy before qualifying for purchase amount</span>
+                        {/* <TextField
+                          label="Discount"
+                          autoComplete="on"
+                          {...configuration.amount}
+                          suffix="$"
+                        /> */}
+                    </Card>
+                    <Card>
+                      <Select
+                        label="Currency Code"
+                        options={[
+                          { label: "CAD", value: CurrencyCode.Cad },
+                          { label: "USD", value: CurrencyCode.Usd },
+                          { label: "GBP", value: CurrencyCode.Gbp },
+                          { label: "EUR", value: CurrencyCode.Eur },
+                          { label: "AUD", value: CurrencyCode.Aud },
+                          { label: "Mxn", value: CurrencyCode.Mxn }
+                        ]}
+                        value={selectedCurrencyCode}
+                        onChange={handleCurrencyCodeChange}
+                      />
 
-            <b>To enable this discount, follow these simple steps:</b>
-
-            <ul>
-                <li>Go to Discounts</li>
-                <li>Create Discount</li>
-                <li>Choose Iphis Order Discount 5 for $60</li>
-            </ul>
-            </p>
-          </LegacyCard>
+                      <CurrencyField
+                        currencyCode={selectedCurrencyCode}
+                        label="Offer Amount"
+                        onChange={setCurrencyCodeValue}
+                        value={CurrencyCodeValue}
+                      />
+                      <span className="Polaris-Text--root Polaris-Text--subdued">Price of items</span>
+                      </Card>
+                      <CombinationCard
+                        combinableDiscountTypes={combinesWith}
+                        discountClass={DiscountClass.Product}
+                        discountDescriptor={"Discount"}
+                      />
+                      <ActiveDatesCard
+                        startDate={startDate}
+                        endDate={endDate}
+                        timezoneAbbreviation="EST"
+                      />
+                </VerticalStack>
+        </Form>
+        </Layout.Section>
+        <Layout.Section secondary>
+          <SummaryCard
+            header={{
+              discountMethod: discountMethod.value,
+              discountDescriptor:
+                discountMethod.value === DiscountMethod.Automatic
+                  ? discountTitle.value
+                  : discountCode.value,
+              appDiscountType: "Volume",
+              isEditing: false,
+            }}
+            performance={{
+              status: DiscountStatus.Scheduled,
+              usageCount: 0,
+              isEditing: false,
+            }}
+            minimumRequirements={{
+              requirementType: requirementType.value,
+              subtotal: requirementSubtotal.value,
+              quantity: requirementQuantity.value,
+              currencyCode: currencyCode,
+            }}
+            usageLimits={{
+              oncePerCustomer: appliesOncePerCustomer.value,
+              totalUsageLimit: usageLimit.value,
+            }}
+          />
+        </Layout.Section>
+        <Layout.Section>
+          <PageActions
+            primaryAction={{
+              content: "Save discount",
+              onAction: submit,
+              loading: isLoading,
+            }}
+            secondaryActions={[
+              {
+                content: "Discard",
+                onAction: () => onBreadcrumbAction(redirect, true),
+              },
+            ]}
+          />
         </Layout.Section>
 
       </Layout>
