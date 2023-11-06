@@ -36,7 +36,8 @@
   },
   "dependencies": {
     "@prisma/client": "^5.2.0",
-    "@remix-run/react": "^2.1.0",
+    "@remix-run/node": "^2.2.0",
+    "@remix-run/react": "^2.2.0",
     "@shopify/app-bridge": "^3.7.9",
     "@shopify/app-bridge-react": "^3.7.9",
     "@shopify/discount-app-components": "^1.5.0",
@@ -45,6 +46,8 @@
     "@shopify/react-i18n": "^7.8.0",
     "@shopify/shopify_function": "0.1.0",
     "@shopify/shopify-api": "^7.6.0",
+    "@shopify/shopify-app-remix": "^2.1.0",
+    "axios": "^1.6.0",
     "cryptr": "^6.2.0",
     "graphql": "^16.8.0",
     "javy": "0.1.1",

@@ -13,6 +13,15 @@ export default function App({ Component, pageProps }) {
   <PolarisProvider i18n={translations}>
     <AppBridgeProvider>
     <DiscountProvider>
+    <NavigationMenu
+          navigationLinks={[
+            {
+              label: "IPHIS P-D",
+              destination: "/iphis_discount_product",
+            }
+          ]}
+          matcher={(link) => router.pathname === link.destination}
+        />
       <Component {...pageProps} />
       <Outlet />
         </DiscountProvider>

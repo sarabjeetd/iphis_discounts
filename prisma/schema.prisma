@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -17,6 +14,20 @@ model stores {
 
 model session {
   id      String  @id
-  content String? @db.Text
+  content String?
   shop    String?
+}
+
+model DiscountAutomaticApp {
+  id                Int      @id @default(autoincrement())
+  orderDiscounts    Boolean  @default(false)
+  productDiscounts  Boolean  @default(false)
+  shippingDiscounts Boolean  @default(false)
+  title             String
+  endsAt            DateTime?
+  startsAt          DateTime?
+  createdAt         DateTime?
+  status            String?
+  discountId        String?
+  discountClass     String?
 }
