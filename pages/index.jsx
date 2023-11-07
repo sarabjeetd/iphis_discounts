@@ -196,14 +196,15 @@ const HomePage = () => {
         {errors.length > 0 && <ErrorBanner errors={errors} />}
         <Layout.Section>
           <Form method="post" >
-            <MethodCard
+            {/* <MethodCard
               title="IPHIS"
               discountTitle={discountTitle}
               discountClass={DiscountClass.Product}
               discountCode={discountCode}
               discountMethod={discountMethod}
-            />
-            {/* <VerticalStack align="space-around" gap="3">
+            /> */}
+            <VerticalStack align="space-around" gap="3">
+            <Card>
               <Text as="p">
                 <span className="Polaris-Text--root Polaris-Text--headingMd">IPHIS</span>{" "}
                 <span className="Polaris-Text--root Polaris-Text--subdued">Product discount</span>
@@ -217,8 +218,8 @@ const HomePage = () => {
                   autoComplete="on"
                   {...discountTitle}
                 />
-            </VerticalStack> */}
-            <VerticalStack gap="3">
+                 </Card>
+                 
               <Card>
                 <Text variant="headingMd" as="h2">
                   Quantity for offer to activate

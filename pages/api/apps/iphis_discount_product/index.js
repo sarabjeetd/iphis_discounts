@@ -19,6 +19,7 @@ const handler = async (req, res) => {
       usageLimit,
       appliesOncePerCustomer,
       startsAt,
+      selectedCurrencyCode,
       combinesWith,
       endsAt,
       configuration: { quantity, amount }
@@ -28,7 +29,7 @@ const handler = async (req, res) => {
       data: `mutation MyMutation {
         discountAutomaticAppCreate(
           automaticAppDiscount: {
-            functionId: "${process.env.SHOPIFY_IPHIS_PRODUCT_DISCOUNT_UNSTABLE_UNDER_TESTING_ID}", 
+            functionId: "${process.env.SHOPIFY_IPHIS_ORDER_DISCOUNTS_5_FOR_60_ID}", 
             title: "${title}", 
             startsAt:  "${startsAt}",
             endsAt: ${mutationEndsAt},
@@ -36,7 +37,15 @@ const handler = async (req, res) => {
               orderDiscounts:  ${combinesWith.orderDiscounts},
               productDiscounts: ${combinesWith.productDiscounts},
               shippingDiscounts:  ${combinesWith.shippingDiscounts},
-            }     
+            },
+            metafields: [
+              {
+                key: "function-configuration",
+                namespace: "$app:iphis-order-discount-function",
+                type: "json",
+                value: "{\\"discounts\\":[{\\"value\\":{\\"fixedAmount\\":{\\"amount\\": ${amount}}},\\"targets\\":[{\\"orderSubtotal\\":{\\"excludedVariantIds\\":[]}}]}],\\"quantity\\": ${quantity}}"
+              }
+            ]
           }
         ) {
           automaticAppDiscount {
@@ -60,7 +69,7 @@ const handler = async (req, res) => {
             message
           }
         }
-      }`,      
+      }`, 
     });
 
 

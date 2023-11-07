@@ -22,17 +22,24 @@ export default /**
   const configuration = JSON.parse(
     input?.discountNode?.metafield?.value ?? "{}"
   );
-
+  
+  // Extracting the amount and quantity
+  const amount = configuration.discounts[0].value.fixedAmount.amount;
+  const quantity = configuration.quantity;
+  
+  
+  
 /////////////////////
 
 let discountObj = {
-  minimum_required_quantity:5,
-  USD:60,
-  CAD:80,
-  GBP:48,
-  EUR:56,
-  AUD:93,
-  MXN:1027,
+  minimum_required_quantity: quantity,
+  USD:amount,
+  CAD:amount,
+  GBP:amount,
+  EUR:amount,
+  AUD:amount,
+  MXN:amount,
+  INR:amount,
 }
 
 
@@ -101,8 +108,10 @@ if(sets > 0){
    console.log("total_discount=="+total_discount);
    console.log("TO BE CHARGED=="+remaining_balance);
 
+console.log("LATEEST MANMOHAN FUNCTION");
+console.log("currency code" + storeCurrency);
 
-
+console.log("Total amount " + totalAmount);
 
    return {
     "discountApplicationStrategy": DiscountApplicationStrategy.First,
@@ -121,7 +130,7 @@ if(sets > 0){
             }
           }
         ],
-        "message": "5 for "+storeCurrency+" "+discountObj[storeCurrency]+" Discount Applied!"
+        "message": ""+quantity+" for "+storeCurrency+" "+discountObj[storeCurrency]+" Discount Applied!"
       }
     ]
   }
