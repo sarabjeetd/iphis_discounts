@@ -24,6 +24,8 @@ const handler = async (req, res) => {
       endsAt,
       configuration: { quantity, amount }
     } = discount;
+    console.log(selectedCurrencyCode);
+    const valueString = `"{\\"discounts\\":[{\\"value\\":{\\"fixedAmount\\":{\\"amount\\": ${amount}, \\"currencyCode\\": \\"${selectedCurrencyCode}\\"}},\\"targets\\":[{\\"orderSubtotal\\":{\\"excludedVariantIds\\":[]}}]}],\\"quantity\\": ${quantity}}"`;
     const mutationEndsAt = endsAt ? `"${endsAt}"` : `"${startsAt}"`;
         const response = await client.query({
       data: `mutation MyMutation {
@@ -43,7 +45,7 @@ const handler = async (req, res) => {
                 key: "function-configuration",
                 namespace: "$app:iphis-order-discount-function",
                 type: "json",
-                value: "{\\"discounts\\":[{\\"value\\":{\\"fixedAmount\\":{\\"amount\\": ${amount}}},\\"targets\\":[{\\"orderSubtotal\\":{\\"excludedVariantIds\\":[]}}]}],\\"quantity\\": ${quantity}}"
+                value: "{\\"discounts\\":[{\\"value\\":{\\"fixedAmount\\":{\\"amount\\": ${amount}, \\"currencyCode\\": \\"${selectedCurrencyCode}\\"}},\\"targets\\":[{\\"orderSubtotal\\":{\\"excludedVariantIds\\":[]}}]}],\\"quantity\\": ${quantity}}"
               }
             ]
           }

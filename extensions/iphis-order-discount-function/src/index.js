@@ -25,21 +25,43 @@ export default /**
   
   // Extracting the amount and quantity
   const amount = configuration.discounts[0].value.fixedAmount.amount;
+  const currencyCodeDiscount = configuration.discounts[0].value.fixedAmount.currencyCode;
   const quantity = configuration.quantity;
   
   
   
 /////////////////////
 
+// const exchangeRates = {
+//   USD: 1,
+//   CAD: 1.3771 ,
+//   GBP: 0.8137 , 
+//   EUR: 0.9351 , 
+//   AUD: 1.5552 ,
+//   MXN: 17.4809,
+//   INR: 83.2441,
+// };
+
+// let discountObj = {
+//   minimum_required_quantity: quantity,
+//   USD: amount * exchangeRates.USD,
+//   CAD: amount * exchangeRates.CAD,
+//   GBP: amount * exchangeRates.GBP,
+//   EUR: amount * exchangeRates.EUR,
+//   AUD: amount * exchangeRates.AUD,
+//   MXN: amount * exchangeRates.MXN,
+//   INR: amount * exchangeRates.INR,
+// }
+
 let discountObj = {
   minimum_required_quantity: quantity,
-  USD:amount,
-  CAD:amount,
-  GBP:amount,
-  EUR:amount,
-  AUD:amount,
-  MXN:amount,
-  INR:amount,
+  USD: amount,
+  CAD: amount,
+  GBP: amount,
+  EUR: amount,
+  AUD: amount,
+  MXN: amount,
+  INR: amount,
 }
 
 
@@ -109,8 +131,8 @@ if(sets > 0){
    console.log("TO BE CHARGED=="+remaining_balance);
 
 console.log("LATEEST MANMOHAN FUNCTION");
-console.log("currency code" + storeCurrency);
-
+console.log("currency code store" + storeCurrency);
+console.log("currency code form" + currencyCodeDiscount);
 console.log("Total amount " + totalAmount);
 
    return {

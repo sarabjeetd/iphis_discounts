@@ -117,6 +117,7 @@ const HomePage = () => {
         startsAt: form.startDate,
         endsAt: form.endDate,
         combinesWith: form.combinesWith,
+        selectedCurrencyCode:selectedCurrencyCode,
         configuration: {
           quantity: parseInt(form.configuration.quantity),
           amount: parseFloat(CurrencyCodeValue),
@@ -161,23 +162,26 @@ const HomePage = () => {
     };
     return (
       <Layout.Section>
-        <Banner status="critical">
-          <p>There were some issues with your form submission:</p>
-          <ul>
-            {errors.map(({ message, field }, index) => {
-               const fieldName = field.join(' > ');
-              return (
-                <li key={`${message}${index}`}>
-                  <strong>{fieldName}:</strong> {message}X
-                </li>
-              );
-            })}
-          </ul>
-        </Banner>
+         <Banner status="critical">
+        <p>There were some issues with your form submission:</p>
+        <ul>
+          {errors.map(({ message, field }, index) => {
+            const fieldName = field[field.length - 1];
+            return (
+              <li key={`${message}${index}`}>
+                <strong>{fieldName}:</strong> {message}
+              </li>
+            );
+          })}
+        </ul>
+      </Banner>
       </Layout.Section>
     );
   };
-
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    submit();
+  };
   
   return (
     <Page
@@ -195,7 +199,7 @@ const HomePage = () => {
       <Layout>
         {errors.length > 0 && <ErrorBanner errors={errors} />}
         <Layout.Section>
-          <Form method="post" >
+          <Form method="post" onSubmit={handleFormSubmit} >
             {/* <MethodCard
               title="IPHIS"
               discountTitle={discountTitle}
