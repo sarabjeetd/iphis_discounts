@@ -1,5 +1,22 @@
+import useFetch from "@/components/hooks/useFetch";
 // @ts-check
 import { DiscountApplicationStrategy } from "../generated/api";
+
+async function fetchExchangeRates() {
+  // const fetch = useFetch();                                                          //fetch is giving me  Wasm binary file error
+  const apiKey = 'fca_live_Eo0mEZFSSUzxR07aAFCVRV1eLYqW7iirUG4kSOnS';
+  const apiUrl = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}`;
+
+  try {
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+    return data.data; // Extracting the exchange rates from the API response
+  } catch (error) {
+    console.error('Error fetching exchange rates:', error);
+    return null;
+  }
+}
+
 
 /**
  * @typedef {import("../generated/api").InputQuery} InputQuery
@@ -27,9 +44,17 @@ export default /**
   const amount = configuration.discounts[0].value.fixedAmount.amount;
   const currencyCodeDiscount = configuration.discounts[0].value.fixedAmount.currencyCode;
   const quantity = configuration.quantity;
-  
-  
-  
+ 
+
+  fetchExchangeRates().then(exchangeRates => {
+    if (exchangeRates) {
+      console.log('Exchange rates new: ' + exchangeRates )
+    } else {
+      console.log('Failed to fetch exchange rates. Using default calculations.');
+    }
+
+  });
+
 /////////////////////
 
 // const exchangeRates = {
