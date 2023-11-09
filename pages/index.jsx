@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import isShopAvailable from "@/utils/middleware/isShopAvailable";
 import { useAppBridge } from "@shopify/app-bridge-react";
 import { Redirect } from "@shopify/app-bridge/actions";
 import {PrismaClient} from "@prisma/client";
+import CustomerSelector from "../components/CustomerSelector";
+import CustomerSegmentSelector from "../components/CustomerSegmentSelector";
+
 // import { useSubmit } from "@remix-run/react";
 import {
   Form,
@@ -17,6 +20,11 @@ import {
   Select,
   Banner,
   Button,
+  ChoiceList,
+  Stack,
+  Modal,
+  List,
+  Checkbox 
 } from "@shopify/polaris";
 import useFetch from "@/components/hooks/useFetch";
 import CurrencyField from "../components/CurrencyField";
@@ -34,6 +42,10 @@ import {
   CombinationCard,
   ActiveDatesCard,
   DiscountStatus,
+  CustomerEligibilityCard,
+  Eligibility,
+  MinimumRequirementsCard,
+  AppliesTo
 } from "@shopify/discount-app-components";
 
 export async function getServerSideProps(context) {
@@ -65,6 +77,85 @@ const HomePage = () => {
     setSelectedCurrencyCode(newValue);
   };
   const [CurrencyCodeValue, setCurrencyCodeValue] = useState([]);
+  const [selectedCustomerSegments, setSelectedCustomerSegments] = useState([]);
+  const [selectedCustomers, setSelectedCustomers] = useState([]);
+  const [eligibility, setEligibility] = useState(Eligibility.Customers);
+  
+  const [requirementType2, setRequirementType] = useState(RequirementType.None);
+  const [subtotal, setSubtotal] = useState("");
+  const [quantity, setQuantity] = useState("");
+
+
+  const ProductList = ["iphone", "laptop", "watch"]
+  const Collections = ["electronics", "clothes", "videogames", "others"]
+  
+  const [selected, setSelected] = useState(["COLLECTIONS"]);
+  const [Products, setProducts] = useState([]);
+  const [active, setActive] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [collections, SetCollection] = useState(Collections);
+  const [change, setChange] = useState(true);
+  const [OnlyOne, setOnlyOne]=useState(false);
+  const [selectedCollection, setSelectedCollection] = useState({
+    CollectionsList: [],
+    response: [],
+  });
+  const handleChangeModel = useCallback(() => setActive(!active), [active]);
+  const activator = <Button onClick={handleChangeModel}>Browser</Button>;
+
+  const handleChange = value => {
+    if (value[0] == "COLLECTIONS") {
+      setSelected(value);
+      setChange(true);
+      SetCollection(Collections);
+    } else {
+      setSelected(value);
+      setChange(false);
+      setProducts(ProductList);
+    }
+  };
+
+  const handlerSearch = e => {
+    if (e.target.value === "") {
+      setProducts(ProductList);
+      return;
+    } 
+    else {
+      const FilterProductList = Products.filter(item =>
+        item.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      setProducts(FilterProductList);
+    }
+  };
+
+  const handlerSearchSecond = e => {
+    if (e.target.value === "") {
+      SetCollection(Collections);
+      return;
+    } else {
+      const FilterProductList = Collections.filter(item =>
+        item.toLowerCase().includes(e.target.value.toLowerCase())
+      );
+      SetCollection(FilterProductList);
+    }
+  };
+
+  const handleChangeCheckbox = e => {
+    const { value, checked } = e.target;
+    const { CollectionsList } = selectedCollection;
+    console.log(`${value} is ${checked}`);
+    if (checked) {
+      setChecked(checked);
+      setSelectedCollection({
+        CollectionsList: [...CollectionsList, value],
+      });
+    } else {
+      setChecked(checked);
+      setSelectedCollection({
+        CollectionsList: CollectionsList.filter(e => e !== value),
+      });
+    }
+  };
 
   const prisma = new PrismaClient()
   const redirect = Redirect.create(app);
@@ -105,6 +196,7 @@ const HomePage = () => {
       configuration: {
         quantity: useField("1"),
         amount: useField("0"),
+        value: useField(""),
       },
     },
     onSubmit: async (form) => {
@@ -200,13 +292,6 @@ const HomePage = () => {
         {errors.length > 0 && <ErrorBanner errors={errors} />}
         <Layout.Section>
           <Form method="post" onSubmit={handleFormSubmit} >
-            {/* <MethodCard
-              title="IPHIS"
-              discountTitle={discountTitle}
-              discountClass={DiscountClass.Product}
-              discountCode={discountCode}
-              discountMethod={discountMethod}
-            /> */}
             <VerticalStack align="space-around" gap="3">
             <Card>
               <Text as="p">
@@ -223,7 +308,32 @@ const HomePage = () => {
                   {...discountTitle}
                 />
                  </Card>
-                 
+                 <CustomerEligibilityCard
+                    eligibility={{
+                      value: eligibility,
+                      onChange: setEligibility,
+                    }}
+                    selectedCustomerSegments={{
+                      value: selectedCustomerSegments,
+                      onChange: setSelectedCustomerSegments,
+                    }}
+                    selectedCustomers={{
+                      value: selectedCustomers,
+                      onChange: setSelectedCustomers,
+                    }}
+                    customerSelector={
+                      <CustomerSelector
+                        selectedCustomers={selectedCustomers}
+                        setSelectedCustomers={setSelectedCustomers}
+                      />
+                    }
+                    customerSegmentSelector={
+                      <CustomerSegmentSelector
+                        selectedCustomerSegments={selectedCustomerSegments}
+                        setSelectedCustomerSegments={setSelectedCustomerSegments}
+                      />
+                    }
+                  />
               <Card>
                 <Text variant="headingMd" as="h2">
                   Quantity for offer to activate
@@ -236,28 +346,8 @@ const HomePage = () => {
                 <span className="Polaris-Text--root Polaris-Text--subdued">
                   Number of items to buy before qualifying for purchase amount
                 </span>
-                {/* <TextField
-                          label="Discount"
-                          autoComplete="on"
-                          {...configuration.amount}
-                          suffix="$"
-                        /> */}
               </Card>
               <Card>
-                <Select
-                  label="Currency Code"
-                  options={[
-                    { label: "CAD", value: CurrencyCode.Cad },
-                    { label: "USD", value: CurrencyCode.Usd },
-                    { label: "GBP", value: CurrencyCode.Gbp },
-                    { label: "EUR", value: CurrencyCode.Eur },
-                    { label: "AUD", value: CurrencyCode.Aud },
-                    { label: "Mxn", value: CurrencyCode.Mxn },
-                  ]}
-                  value={selectedCurrencyCode}
-                  onChange={handleCurrencyCodeChange}
-                />
-
                 <CurrencyField
                   currencyCode={selectedCurrencyCode}
                   label="Offer Amount"
@@ -267,7 +357,150 @@ const HomePage = () => {
                 <span className="Polaris-Text--root Polaris-Text--subdued">
                   Price of items
                 </span>
+                <ChoiceList
+                  title="APPLY TO"
+                  choices={[
+                    { label: "Specific collections", value: "COLLECTIONS" },
+                    { label: "Specific products", value: "PRODUCTS" },
+                  ]}
+                  selected={selected}
+                  onChange={handleChange}
+                />
+                <VerticalStack>
+
+                  {
+                    change?(
+                      <TextField  
+                  {...configuration.value}
+                  />
+                    ):(
+                      <TextField  
+                  {...configuration.value}
+                  />
+                    )
+                  }
+                   <div>
+                  {change ? (
+                    <Modal
+                    activator={activator}
+                    open={active}
+                    onClose={handleChangeModel}
+                    title="Add collections"
+                    primaryAction={{
+                      content: "Add",
+                      onAction: handleChangeModel,
+                    }}
+                    secondaryActions={[
+                      {
+                        content: "Cancel",
+                        onAction: handleChangeModel,
+                      },
+                    ]}
+                  >
+                      <input
+                          type="text"
+                          onChange={handlerSearchSecond}
+                          style={{
+                            width: "90%",
+                            padding: "10px",
+                            marginLeft: "30px",
+                          }}
+                        />
+                    <Modal.Section>
+                      <Stack>
+                        <form>
+                          <List>
+                          {collections &&
+                                  collections.map((item, index) => {
+                                    return (
+                                      <List.Item key={index}>
+                                        <input
+                                          type="checkbox"
+                                          value={item}
+                                          checked={checked}
+                                          onChange={handleChangeCheckbox}
+                                        />
+                                        <label>{item}</label>
+                                      </List.Item>
+                                    );
+                                  })}
+                          </List>
+                        </form>
+                      </Stack>
+                    </Modal.Section>
+                    </Modal>
+                  ) : (
+                    <Modal
+                    activator={activator}
+                    open={active}
+                    onClose={handleChangeModel}
+                    title="Add Products"
+                    primaryAction={{
+                      content: "Add",
+                      onAction: handleChangeModel,
+                    }}
+                    secondaryActions={[
+                      {
+                        content: "Cancel",
+                        onAction: handleChangeModel,
+                      },
+                    ]}
+                  >
+                            <input
+                              type="text"
+                              onChange={handlerSearch}
+                              style={{
+                                width: "90%",
+                                padding: "10px",
+                                marginLeft: "30px",
+                              }}
+                            />
+                          <Modal.Section>
+                              <Stack>
+                                <form>
+                                  <List>
+                                    {Products &&
+                                      Products.map((item, index) => {
+                                        return (
+                                          <List.Item key={index}>
+                                            <Checkbox
+                                              label={item}
+                                              value={item}
+                                              name={item}
+                                              checked={checked}
+                                              // onChange={handleChangeCheckbox}
+                                            />
+                                          </List.Item>
+                                        );
+                                      })}
+                                  </List>
+                                </form>
+                              </Stack>
+                            </Modal.Section>
+                            </Modal>
+                  )}    
+                  </div>
+                </VerticalStack>
+                
               </Card>
+              <MinimumRequirementsCard
+                    appliesTo={AppliesTo.Products}
+                    currencyCode={CurrencyCode.Cad}
+                    requirementType={{
+                      value: requirementType2,
+                      onChange: setRequirementType,
+                    }}
+                    subtotal={{
+                      value: subtotal,
+                      onChange: setSubtotal,
+                    }}
+                    quantity={{
+                      value: quantity,
+                      onChange: setQuantity,
+                    }}
+                    discountMethod={DiscountMethod.Code}
+                    isRecurring
+                  />
               <CombinationCard
                 combinableDiscountTypes={combinesWith}
                 discountClass={DiscountClass.Product}

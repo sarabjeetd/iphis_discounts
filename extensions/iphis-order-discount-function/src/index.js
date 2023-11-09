@@ -1,22 +1,5 @@
-import useFetch from "@/components/hooks/useFetch";
 // @ts-check
 import { DiscountApplicationStrategy } from "../generated/api";
-
-async function fetchExchangeRates() {
-  // const fetch = useFetch();                                                          //fetch is giving me  Wasm binary file error
-  const apiKey = 'fca_live_Eo0mEZFSSUzxR07aAFCVRV1eLYqW7iirUG4kSOnS';
-  const apiUrl = `https://api.freecurrencyapi.com/v1/latest?apikey=${apiKey}`;
-
-  try {
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-    return data.data; // Extracting the exchange rates from the API response
-  } catch (error) {
-    console.error('Error fetching exchange rates:', error);
-    return null;
-  }
-}
-
 
 /**
  * @typedef {import("../generated/api").InputQuery} InputQuery
@@ -45,16 +28,16 @@ export default /**
   const currencyCodeDiscount = configuration.discounts[0].value.fixedAmount.currencyCode;
   const quantity = configuration.quantity;
  
-
-  fetchExchangeRates().then(exchangeRates => {
-    if (exchangeRates) {
-      console.log('Exchange rates new: ' + exchangeRates )
-    } else {
-      console.log('Failed to fetch exchange rates. Using default calculations.');
-    }
-
-  });
-
+//   const getData = () => {
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('GET', 'https://api.freecurrencyapi.com/v1/latest?apikey=fca_live_Eo0mEZFSSUzxR07aAFCVRV1eLYqW7iirUG4kSOnS');
+//     xhr.responseType = 'json';
+//     xhr.onload = () => {
+//       const data = JSON.parse(xhr.response);
+//       console.log(data);
+//     }
+//     xhr.send();
+// }
 /////////////////////
 
 // const exchangeRates = {
@@ -159,7 +142,7 @@ console.log("LATEEST MANMOHAN FUNCTION");
 console.log("currency code store" + storeCurrency);
 console.log("currency code form" + currencyCodeDiscount);
 console.log("Total amount " + totalAmount);
-
+// console.log("XMLResponse data" + getData());
    return {
     "discountApplicationStrategy": DiscountApplicationStrategy.First,
     "discounts": [
