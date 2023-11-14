@@ -19,15 +19,25 @@ model session {
 }
 
 model DiscountAutomaticApp {
-  id                Int      @id @default(autoincrement())
-  orderDiscounts    Boolean  @default(false)
-  productDiscounts  Boolean  @default(false)
-  shippingDiscounts Boolean  @default(false)
-  title             String
-  endsAt            DateTime?
-  startsAt          DateTime?
-  createdAt         DateTime?
-  status            String?
-  discountId        String?
-  discountClass     String?
+  id                   Int       @id @default(autoincrement())
+  orderDiscounts       Boolean   @default(false)
+  productDiscounts     Boolean   @default(false)
+  shippingDiscounts    Boolean   @default(false)
+  title                String
+  endsAt               DateTime?
+  startsAt             DateTime?
+  createdAt            DateTime?
+  status               String?
+  discountId           String?
+  discountClass        String?
+  selectedCurrencyCode String?
+  requirementType      String?
+  requirementSubtotal  String?
+  requirementQuantity  String?
+  method               String?
+  eligibility          String?
+  selectedCollections  Int[]     @default([])
+  selectedProducts     Int[]     @default([])
+  fixedAmount          Float?
+  quantity             Int?
 }

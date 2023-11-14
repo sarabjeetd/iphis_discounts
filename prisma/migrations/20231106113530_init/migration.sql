@@ -28,6 +28,17 @@ CREATE TABLE "DiscountAutomaticApp" (
     "status" TEXT NOT NULL,
     "discountId" TEXT NOT NULL,
     "discountClass" TEXT NOT NULL,
+    "selectedCurrencyCode" TEXT,
+    "requirementType" TEXT,
+    "method" TEXT,
+    "requirementSubtotal" TEXT,
+    "requirementQuantity" TEXT,
+    "eligibility" TEXT,
+    "selectedCollections" INTEGER[],
+    "selectedProducts" INTEGER[],
+    "fixedAmount" FLOAT,
+    "quantity" INTEGER,
 
     CONSTRAINT "DiscountAutomaticApp_pkey" PRIMARY KEY ("id")
 );
+

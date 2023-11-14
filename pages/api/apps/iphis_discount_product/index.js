@@ -18,13 +18,19 @@ const handler = async (req, res) => {
       code,
       usageLimit,
       appliesOncePerCustomer,
+      requirementType,
+      requirementSubtotal,
+      requirementQuantity,
+      eligibility,
+      selectedCollections,
+      selectedProducts,
       startsAt,
       selectedCurrencyCode,
       combinesWith,
       endsAt,
       configuration: { quantity, amount }
     } = discount;
-    console.log(selectedCurrencyCode);
+    console.log("requirement console log" + data);
     const valueString = `"{\\"discounts\\":[{\\"value\\":{\\"fixedAmount\\":{\\"amount\\": ${amount}, \\"currencyCode\\": \\"${selectedCurrencyCode}\\"}},\\"targets\\":[{\\"orderSubtotal\\":{\\"excludedVariantIds\\":[]}}]}],\\"quantity\\": ${quantity}}"`;
     const mutationEndsAt = endsAt ? `"${endsAt}"` : `"${startsAt}"`;
         const response = await client.query({
@@ -97,10 +103,19 @@ const handler = async (req, res) => {
             status: status,
             discountId: discountId,
             discountClass: discountClass,
+            requirementType: requirementType,
+            requirementSubtotal: requirementSubtotal,
+            requirementQuantity: requirementQuantity,
+            eligibility: eligibility,
+            selectedCollections: selectedCollections ?? [],
+            selectedProducts: selectedProducts ?? [], 
+            method: method,
+            fixedAmount : amount,
+            selectedCurrencyCode: selectedCurrencyCode,
           }
         })
         
-      return res.status(200).json({ data: newData,  message: "Success" });
+      return res.status(200).json({ datares: newData,  message: "Success" });
     }
 
     } catch (e) {
