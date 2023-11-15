@@ -9,10 +9,10 @@ const IphisProductDiscountPage = () => {
                 <Layout>
                     <Layout.Section>
                         <LegacyCard sectioned title="Iphis Product Discount"  primaryFooterAction={{
-                                   content: "Install",  
+                                   content: "Installl",  
                                    onAction:async()=> {
-                                    const response = await (await fetch("/api/apps/iphis_discount_product")).json();
-                                    console.log(response);
+                                    const response = await (await fetch("/api/apps/collection")).json();
+                                    console.log("collecion_list" + JSON.stringify(response));
                                    } 
                                 }}
                             >

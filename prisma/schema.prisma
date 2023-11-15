@@ -36,8 +36,8 @@ model DiscountAutomaticApp {
   requirementQuantity  String?
   method               String?
   eligibility          String?
-  selectedCollections  Int[]     @default([])
-  selectedProducts     Int[]     @default([])
+  selectedCollections  String[]  @default([])
+  selectedProducts     String[]  @default([])
   fixedAmount          Float?
   quantity             Int?
 }

@@ -5,7 +5,7 @@ import { Redirect } from "@shopify/app-bridge/actions";
 import {PrismaClient} from "@prisma/client";
 import CustomerSelector from "../components/CustomerSelector";
 import CustomerSegmentSelector from "../components/CustomerSegmentSelector";
-
+import useFetch from "@/components/hooks/useFetch";
 // import { useSubmit } from "@remix-run/react";
 import {
   Form,
@@ -27,7 +27,6 @@ import {
   Frame,
   Checkbox,
 } from "@shopify/polaris";
-import useFetch from "@/components/hooks/useFetch";
 import CurrencyField from "../components/CurrencyField";
 import { CurrencyCode } from "@shopify/react-i18n";
 import { useForm, useField } from "@shopify/react-form";
@@ -64,6 +63,7 @@ export async function action({ request }) {
 }
 const HomePage = () => {
   // const submitForm = useSubmit();
+  
   const fetch = useFetch();
   const router = useRouter();
   const [errors, setErrors] = useState([]);
@@ -97,18 +97,10 @@ const HomePage = () => {
   const handleSearch = (value) => {
     setSearchQuery(value);
   };
-  const collectionsData = [
-    { id: 1, name: "Electronics" },
-    { id: 2, name: "Clothes" },
-    { id: 3, name: "Video Games" },
-    { id: 4, name: "Others" },
-  ];
-  
-  const productsData = [
-    { id: 101, name: "iPhone" },
-    { id: 102, name: "Laptop" },
-    { id: 103, name: "Watch" },
-  ];
+  const [collectionsData, setCollectionsData] = useState([]);
+  const [productsData, setProductsData] = useState([]);
+ 
+ 
 
   
   const handleCollectionSelection = (collectionId, isChecked) => {
@@ -143,24 +135,69 @@ const HomePage = () => {
     );
   };
 
-  const handleChangeModel = useCallback(() => setActive(!active), [active]);
-  const activator = <Button onClick={handleChangeModel}>Browser</Button>;
-
-  const handleChange = (value) => {
-    if (value[0] === "COLLECTIONS") {
-      setSelected(value);
-      // Open modal for collections
-      setActive(true);
-      // Fetch and set collections
-      // Example: fetchCollections().then(collections => SetCollection(collections));
-    } else if (value[0] === "PRODUCTS") {
-      setSelected(value);
-      // Open modal for products
-      setActive(true);
-      // Fetch and set products
-      // Example: fetchProducts().then(products => setProducts(products));
+  const handleChangeModel = async () => {
+    setActive(!active);
+    
+    if (selected[0] === "COLLECTIONS" || selected[0] === "PRODUCTS") {
+      if (selected[0] === "COLLECTIONS") {
+        try {
+          const response = await fetch("/api/apps/collection");
+          const collections = await response.json();
+          console.log("collection_listtt: " + JSON.stringify(collections));
+          setCollectionsData(collections.body.data.collections.edges);
+        } catch (error) {
+          console.error("Error fetching collections:", error);
+        }
+      } else {
+        try {
+          const response = await fetch("/api/apps/products");
+          const products  = await response.json();
+          const fetchedProducts = products.body.data.products.edges;
+          console.log("p_listtt: " + JSON.stringify(fetchedProducts));
+          setProductsData(fetchedProducts.map(product => ({
+            id: product.node.id,
+            name: product.node.title
+          })));
+          } catch (error) {
+          console.error("Error fetching products:", error);
+        }
+      }
     }
   };
+
+  
+  const activator = <Button onClick={handleChangeModel}>Browser</Button>;
+
+  const handleChange = async (value) => {
+    if (value[0] === "COLLECTIONS") {
+      setSelected(value);
+      setActive(true);
+      try {
+        const response = await fetch("/api/apps/collection");
+        const collections = await response.json();
+        console.log("collection_listtt: " + JSON.stringify(collections));
+        setCollectionsData(collections.body.data.collections.edges);
+      } catch (error) {
+        console.error("Error fetching collections:", error);
+      }
+    } else if (value[0] === "PRODUCTS") {
+      setSelected(value);
+      setActive(true);
+      try {
+        const response = await fetch("/api/apps/products");
+        const products  = await response.json();
+        const fetchedProducts = products.body.data.products.edges;
+        console.log("p_listtt: " + JSON.stringify(fetchedProducts));
+        setProductsData(fetchedProducts.map(product => ({
+          id: product.node.id,
+          name: product.node.title
+        })));
+        } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
+  };
+  
   
 
 
@@ -213,7 +250,27 @@ const HomePage = () => {
       } else {
         selectedItems = selectedProducts.length > 0 ? selectedProducts : null;
       }
+      const isNumeric = (value) => {
+        return /^\d+$/.test(value);
+      };
 
+      if (!isNumeric(configuration.quantity.value)) {
+        setErrors((prevErrors) => [
+          ...prevErrors,
+          { field: ['Minimum quantity'], message: 'Please enter a valid quantity' },
+        ]);
+        return { status: 'failed' };
+      }
+
+      if (isNaN(parseFloat(CurrencyCodeValue)) || parseFloat(CurrencyCodeValue) <= 0) {
+        setErrors((prevErrors) => [
+          ...prevErrors,
+          { field: ['Offer Amount'], message: 'Please enter a valid offer amount' },
+        ]);
+        return { status: 'failed' };
+      }
+
+      
       const discount = {
         title: form.discountTitle,
         method: form.discountMethod,
@@ -232,8 +289,8 @@ const HomePage = () => {
         selectedProducts: selected[0] === "PRODUCTS" ? selectedItems : null,
         
         configuration: {
-          // quantity: parseInt(form.configuration.quantity),
-          quantity: quantity,
+          quantity: parseInt(form.configuration.quantity),
+          // quantity: quantity,
           amount: parseFloat(CurrencyCodeValue),
         },
       };
@@ -294,6 +351,7 @@ const HomePage = () => {
   };
   const handleFormSubmit = (event) => {
     event.preventDefault();
+    setErrors([]);
     submit();
   };
   
@@ -389,6 +447,8 @@ const HomePage = () => {
                   selected={selected}
                   onChange={handleChange}
                 />
+                 </VerticalStack>
+                 <VerticalStack>
                  <TextField
                     value={searchInput}
                     onChange={setSearchInput}
@@ -399,52 +459,54 @@ const HomePage = () => {
                     }
                     style={{ flex: 1 }}
                   />
-                
+                 </VerticalStack>
+                 <VerticalStack>
                 <div>
-                  {selected[0] === "COLLECTIONS"
-                    ? selectedCollections.map((collectionId) => {
-                        const collection = collectionsData.find(
-                          (c) => c.id === collectionId
-                        );
-                        return (
-                          <div
-                            key={collectionId}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              marginBottom: "5px",
-                              border: "1px solid #ccc",
-                              backgroundColor: "#f0f0f0",
-                              padding: "8px",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            <span style={{ flex: 1 }}>{collection.name}</span>
-                            <button onClick={() => removeCollection(collectionId)}>❌</button>
-                          </div>
-                        );
-                      })
-                    : selectedProducts.map((productId) => {
-                        const product = productsData.find((p) => p.id === productId);
-                        return (
-                          <div
-                            key={productId}
-                            style={{
-                              display: "flex",
-                              alignItems: "center",
-                              marginBottom: "5px",
-                              border: "1px solid #ccc",
-                              backgroundColor: "#f0f0f0",
-                              padding: "8px",
-                              borderRadius: "5px",
-                            }}
-                          >
-                            <span style={{ flex: 1 }}>{product.name}</span>
-                            <button onClick={() => removeProduct(productId)}>❌</button>
-                          </div>
-                        );
-                      })}
-                </div>
+                      {selected[0] === "COLLECTIONS"
+                        ? selectedCollections.map((collectionId) => {
+                            const collection = collectionsData.find(
+                              (c) => c.node.id === collectionId
+                            );
+                            return (
+                              <div
+                                key={collectionId}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  marginBottom: "5px",
+                                  border: "1px solid #ccc",
+                                  backgroundColor: "#f0f0f0",
+                                  padding: "8px",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                <span style={{ flex: 1 }}>{collection.node.title}</span>
+                                <button onClick={() => removeCollection(collectionId)}>❌</button>
+                              </div>
+                            );
+                          })
+                        : selectedProducts.map((productId) => {
+                            const product = productsData.find((p) => p.id === productId);
+                            return (
+                              <div
+                                key={productId}
+                                style={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  marginBottom: "5px",
+                                  border: "1px solid #ccc",
+                                  backgroundColor: "#f0f0f0",
+                                  padding: "8px",
+                                  borderRadius: "5px",
+                                }}
+                              >
+                                <span style={{ flex: 1 }}>{product.name}</span>
+                                <button onClick={() => removeProduct(productId)}>❌</button>
+                              </div>
+                            );
+                          })}
+                    </div>
+
                 
                 </VerticalStack>
                 <VerticalStack>
@@ -466,6 +528,7 @@ const HomePage = () => {
                     ]}
                   >
                     <Modal.Section>
+                    <VerticalStack>
                         <TextField
                           label={selected[0] === "COLLECTIONS" ? "Search collections" : "Search products"}
                           placeholder="Search"
@@ -473,42 +536,53 @@ const HomePage = () => {
                           onChange={handleSearch}
                         />
                         <List>
-                          {selected[0] === "COLLECTIONS"
-                            ? collectionsData
-                                .filter((collection) =>
-                                  collection.name.toLowerCase().includes(searchQuery.toLowerCase())
-                                )
-                                .map((collection) => (
-                                  <List.Item key={collection.id}>
-                                    <Checkbox
-                                      label={collection.name}
-                                      checked={selectedCollections.includes(collection.id)}
-                                      onChange={(isChecked) =>
-                                        handleCollectionSelection(collection.id, isChecked)
-                                      }
-                                    />
-                                    {/* Replace 'collection.image' with the actual image URL */}
-                                    {/* <img src={collection.image} alt={collection.name} /> */}
-                                  </List.Item>
-                                ))
-                            : productsData
-                                .filter((product) =>
-                                  product.name.toLowerCase().includes(searchQuery.toLowerCase())
-                                )
-                                .map((product) => (
-                                  <List.Item key={product.id}>
-                                    <Checkbox
-                                      label={product.name}
-                                      checked={selectedProducts.includes(product.id)}
-                                      onChange={(isChecked) =>
-                                        handleProductSelection(product.id, isChecked)
-                                      }
-                                    />
-                                    {/* Replace 'product.image' with the actual image URL */}
-                                    {/* <img src={product.image} alt={product.name} /> */}
-                                  </List.Item>
-                                ))}
+                          
+                        {selected[0] === "COLLECTIONS"
+                              ? collectionsData
+                                  .filter((collection) =>
+                                    collection.node.title.toLowerCase().includes(searchQuery.toLowerCase())
+                                  )
+                                  .map((collection) => (
+                                    <div key={collection.node.id} style={{ background: '#f0f0f0', padding: '10px', marginBottom: '10px' }}>
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={selectedCollections.includes(collection.node.id)}
+                                          onChange={(e) =>
+                                            handleCollectionSelection(collection.node.id, e.target.checked)
+                                          }
+                                        />
+                                        <span>{collection.node.title}</span>
+                                        {/* Replace 'collection.node.image' with the actual image URL */}
+                                        {/* <img src={collection.node.image} alt={collection.node.title} /> */}
+                                      </label>
+                                    </div>
+                                  ))
+                              : productsData
+                                  .filter((product) =>
+                                    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+                                  )
+                                  .map((product) => (
+                                    <div key={product.id} style={{ background: '#f0f0f0', padding: '10px', marginBottom: '10px' }}>
+                                      <label>
+                                        <input
+                                          type="checkbox"
+                                          checked={selectedProducts.includes(product.id)}
+                                          onChange={(e) =>
+                                            handleProductSelection(product.id, e.target.checked)
+                                          }
+                                        />
+                                        <span>{product.name}</span>
+                                        {/* Replace 'product.image' with the actual image URL */}
+                                        {/* <img src={product.image} alt={product.name} /> */}
+                                      </label>
+                                    </div>
+                                  ))
+                            }
+
+
                         </List>
+                        </VerticalStack>
                       </Modal.Section>
 
                   </Modal>
@@ -518,7 +592,7 @@ const HomePage = () => {
                 </VerticalStack>
                 
               </Card>
-              <MinimumRequirementsCard
+              {/* <MinimumRequirementsCard
                     appliesTo={AppliesTo.Products}
                     currencyCode={CurrencyCode.Cad}
                     requirementType={{
@@ -535,7 +609,20 @@ const HomePage = () => {
                     }}
                     discountMethod={DiscountMethod.Automatic}
                     isRecurring
-                  />
+                  /> */}
+                  <Card>
+                <Text variant="headingMd" as="h2">
+                  Quantity for offer to activate
+                </Text>
+                <TextField
+                  label="Minimum quantity"
+                  autoComplete="on"
+                  {...configuration.quantity}
+                />
+                <span className="Polaris-Text--root Polaris-Text--subdued">
+                  Number of items to buy before qualifying for purchase amount
+                </span>
+              </Card>
               <CombinationCard
                 combinableDiscountTypes={combinesWith}
                 discountClass={DiscountClass.Product}
