@@ -357,7 +357,7 @@ const HomePage = () => {
   
   return (
     <Page
-      title="IPHIS product discount"
+      title="IPHIS product discount (Buy X for $Y)"
       backAction={{
         content: "Discounts",
         onAction: () => onBreadcrumbAction(redirect, true),
@@ -374,72 +374,59 @@ const HomePage = () => {
           <Form method="post" onSubmit={handleFormSubmit} >
             <VerticalStack align="space-around" gap="3">
             <Card>
-              <Text as="p">
+              {/* <Text as="p">
                 <span className="Polaris-Text--root Polaris-Text--headingMd">IPHIS</span>{" "}
                 <span className="Polaris-Text--root Polaris-Text--subdued">Product discount</span>
-              </Text>
-
+              </Text> */}
+              <VerticalStack align="space-around" gap="3">
                 <Text variant="headingMd" as="h2">
-                    Automatic discount
+                    Discount Title
                 </Text>
+                
                 <TextField
-                  label="Title"
+                  label=""
+                  placeholder="Buy X for $Y"
                   autoComplete="on"
                   {...discountTitle}
                 />
+                </VerticalStack>
                  </Card>
-                 <CustomerEligibilityCard
-                    eligibility={{
-                      value: eligibility,
-                      onChange: setEligibility,
-                    }}
-                    selectedCustomerSegments={{
-                      value: selectedCustomerSegments,
-                      onChange: setSelectedCustomerSegments,
-                    }}
-                    selectedCustomers={{
-                      value: selectedCustomers,
-                      onChange: setSelectedCustomers,
-                    }}
-                    customerSelector={
-                      <CustomerSelector
-                        selectedCustomers={selectedCustomers}
-                        setSelectedCustomers={setSelectedCustomers}
-                      />
-                    }
-                    customerSegmentSelector={
-                      <CustomerSegmentSelector
-                        selectedCustomerSegments={selectedCustomerSegments}
-                        setSelectedCustomerSegments={setSelectedCustomerSegments}
-                      />
-                    }
+                 <Card>
+                  <Text variant="headingMd" as="h2">
+                    Quantity for offer to activate
+                  </Text>
+                  <TextField
+                    label="Minimum quantity"
+                    autoComplete="on"
+                    {...configuration.quantity}
                   />
-              {/* <Card>
+                  <span className="Polaris-Text--root Polaris-Text--subdued">
+                    Number of items to buy before qualifying for purchase amount
+                  </span>
+                </Card>
+      
+                <Card>
+                <VerticalStack align="space-around" gap="3">
                 <Text variant="headingMd" as="h2">
-                  Quantity for offer to activate
+                Offer Amount
                 </Text>
-                <TextField
-                  label="Minimum quantity"
-                  autoComplete="on"
-                  {...configuration.quantity}
-                />
-                <span className="Polaris-Text--root Polaris-Text--subdued">
-                  Number of items to buy before qualifying for purchase amount
-                </span>
-              </Card> */}
-              <Card>
                 <CurrencyField
                   currencyCode={selectedCurrencyCode}
-                  label="Offer Amount"
+                  label=""
                   onChange={setCurrencyCodeValue}
                   value={CurrencyCodeValue}
                 />
+                </VerticalStack>
                 <span className="Polaris-Text--root Polaris-Text--subdued">
                   Price of items
                 </span>
-                <VerticalStack>
+                <VerticalStack align="space-around" gap="2">
+                  
+                <Text variant="headingMd" as="h2">
+                   Apply to
+                </Text>
                 <ChoiceList
-                  title="APPLY TO"
+                  title=""
                   choices={[
                     { label: "Specific collections", value: "COLLECTIONS" },
                     { label: "Specific products", value: "PRODUCTS" },
@@ -448,7 +435,7 @@ const HomePage = () => {
                   onChange={handleChange}
                 />
                  </VerticalStack>
-                 <VerticalStack>
+                 <VerticalStack gap="1">
                  <TextField
                     value={searchInput}
                     onChange={setSearchInput}
@@ -459,8 +446,7 @@ const HomePage = () => {
                     }
                     style={{ flex: 1 }}
                   />
-                 </VerticalStack>
-                 <VerticalStack>
+
                 <div>
                       {selected[0] === "COLLECTIONS"
                         ? selectedCollections.map((collectionId) => {
@@ -509,7 +495,7 @@ const HomePage = () => {
 
                 
                 </VerticalStack>
-                <VerticalStack>
+                <VerticalStack gap="3">
                   <div>
                   <Modal
                     activator={activator}
@@ -528,7 +514,7 @@ const HomePage = () => {
                     ]}
                   >
                     <Modal.Section>
-                    <VerticalStack>
+                    <VerticalStack gap="3">
                         <TextField
                           label={selected[0] === "COLLECTIONS" ? "Search collections" : "Search products"}
                           placeholder="Search"
@@ -592,6 +578,46 @@ const HomePage = () => {
                 </VerticalStack>
                 
               </Card>
+                 <CustomerEligibilityCard
+                    eligibility={{
+                      value: eligibility,
+                      onChange: setEligibility,
+                    }}
+                    selectedCustomerSegments={{
+                      value: selectedCustomerSegments,
+                      onChange: setSelectedCustomerSegments,
+                    }}
+                    selectedCustomers={{
+                      value: selectedCustomers,
+                      onChange: setSelectedCustomers,
+                    }}
+                    customerSelector={
+                      <CustomerSelector
+                        selectedCustomers={selectedCustomers}
+                        setSelectedCustomers={setSelectedCustomers}
+                      />
+                    }
+                    customerSegmentSelector={
+                      <CustomerSegmentSelector
+                        selectedCustomerSegments={selectedCustomerSegments}
+                        setSelectedCustomerSegments={setSelectedCustomerSegments}
+                      />
+                    }
+                  />
+              {/* <Card>
+                <Text variant="headingMd" as="h2">
+                  Quantity for offer to activate
+                </Text>
+                <TextField
+                  label="Minimum quantity"
+                  autoComplete="on"
+                  {...configuration.quantity}
+                />
+                <span className="Polaris-Text--root Polaris-Text--subdued">
+                  Number of items to buy before qualifying for purchase amount
+                </span>
+              </Card> */}
+
               {/* <MinimumRequirementsCard
                     appliesTo={AppliesTo.Products}
                     currencyCode={CurrencyCode.Cad}
@@ -610,19 +636,7 @@ const HomePage = () => {
                     discountMethod={DiscountMethod.Automatic}
                     isRecurring
                   /> */}
-                  <Card>
-                <Text variant="headingMd" as="h2">
-                  Quantity for offer to activate
-                </Text>
-                <TextField
-                  label="Minimum quantity"
-                  autoComplete="on"
-                  {...configuration.quantity}
-                />
-                <span className="Polaris-Text--root Polaris-Text--subdued">
-                  Number of items to buy before qualifying for purchase amount
-                </span>
-              </Card>
+                 
               <CombinationCard
                 combinableDiscountTypes={combinesWith}
                 discountClass={DiscountClass.Product}
@@ -637,6 +651,7 @@ const HomePage = () => {
           </Form>
         </Layout.Section>
         <Layout.Section secondary>
+        <VerticalStack gap="3">
           <SummaryCard
             header={{
               discountMethod: discountMethod.value,
@@ -652,17 +667,34 @@ const HomePage = () => {
               usageCount: 0,
               isEditing: false,
             }}
+            usageLimits={{
+              oncePerCustomer: appliesOncePerCustomer.value,
+              totalUsageLimit: usageLimit.value,
+            }}
+            
             minimumRequirements={{
               requirementType: requirement,
               subtotal: subtotal,
               quantity: quantity,
               currencyCode: currencyCode,
             }}
-            usageLimits={{
-              oncePerCustomer: appliesOncePerCustomer.value,
-              totalUsageLimit: usageLimit.value,
+            combinations={{
+              combinesWith: {
+                orderDiscounts: combinesWith.value.orderDiscounts,
+                productDiscounts: combinesWith.value.productDiscounts,
+                shippingDiscounts: combinesWith.value.shippingDiscounts,
+              },
+            }}
+            additionalDetails={[
+              `Quantity: ${configuration.quantity.value}`,
+              `Price: ${CurrencyCodeValue}`,
+            ]}
+            activeDates={{
+              startDate: startDate.value,
+              endDate: endDate.value,
             }}
           />
+          </VerticalStack>
         </Layout.Section>
         <Layout.Section>
           <PageActions
